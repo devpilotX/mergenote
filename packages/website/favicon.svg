@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Dark background with rounded corners -->
+  <rect width="32" height="32" rx="7" fill="#0f1117"/>
+  <!-- Horizontal lines representing changelog/notes (brand color: amber/gold) -->
+  <rect x="7" y="9" width="12" height="2" rx="1" fill="#f59e0b"/>
+  <rect x="7" y="14" width="9" height="2" rx="1" fill="#f59e0b"/>
+  <rect x="7" y="19" width="10" height="2" rx="1" fill="#f59e0b"/>
+  <!-- Git merge arrow (brand accent: warm orange) -->
+  <path d="M21 14 L25 16 L21 18" fill="none" stroke="#f97316" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="21" y1="16" x2="25" y2="16" stroke="#f97316" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

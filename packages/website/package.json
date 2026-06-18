@@ -1,0 +1,11 @@
+{
+  "name": "@mergenote/website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'Static site, no build needed'"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,31 @@
+{
+  "name": "mergenote",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Mergenote: MCP server that turns merged GitHub PRs into clean release notes",
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "eslint packages/*/src/**/*.ts db/src/**/*.ts",
+    "format": "prettier --write \"packages/*/src/**/*.ts\" \"db/src/**/*.ts\"",
+    "format:check": "prettier --check \"packages/*/src/**/*.ts\" \"db/src/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "pnpm --filter @mergenote/db migrate",
+    "dev:backend": "pnpm --filter @mergenote/backend dev",
+    "dev:website": "pnpm --filter @mergenote/website dev",
+    "dev:mcp": "pnpm --filter @mergenote/mcp-server dev",
+    "dev:mcp-http": "pnpm --filter @mergenote/mcp-server dev:http"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.28.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.11.0"
+}
