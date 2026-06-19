@@ -1,6 +1,11 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { fetchMergedPRs, getTagDate } from "../github.js";
+import { getLicenseStatus, isWithinFreeTierWindow } from "../license.js";
+
+const FREE_TIER_UPGRADE_MSG =
+  "⚡ Free tier is limited to a 7-day PR window.\n\n" +
+  "Upgrade to Pro for unlimited history: https://devpilotx.com/pricing";
 
 const inputSchema = {
   owner: z.string().describe("GitHub repo owner"),
@@ -41,13 +46,11 @@ export function registerGetMergedPRs(server: McpServer): void {
         let until: Date;
 
         if (from_tag) {
-          // Tag-based range
           since = await getTagDate(owner, repo, from_tag);
           until = to_tag
             ? await getTagDate(owner, repo, to_tag)
             : new Date();
         } else if (from_date) {
-          // Date-based range
           since = new Date(from_date);
           until = to_date ? new Date(to_date) : new Date();
 
@@ -68,9 +71,18 @@ export function registerGetMergedPRs(server: McpServer): void {
             };
           }
         } else {
-          // Default: last 7 days
+          // Default: last 7 days (always within free tier)
           until = new Date();
           since = new Date(until.getTime() - 7 * 24 * 60 * 60 * 1000);
+        }
+
+        // Gate: free tier limited to 7-day window
+        const { tier } = getLicenseStatus();
+        if (tier === "free" && !isWithinFreeTierWindow(since, until)) {
+          return {
+            content: [{ type: "text", text: FREE_TIER_UPGRADE_MSG }],
+            isError: true,
+          };
         }
 
         const prs = await fetchMergedPRs(owner, repo, since, until, label_filter);
@@ -87,7 +99,6 @@ export function registerGetMergedPRs(server: McpServer): void {
         const message =
           err instanceof Error ? err.message : String(err);
 
-        // Surface rate limit errors clearly
         if (message.includes("rate limit") || message.includes("403")) {
           return {
             content: [

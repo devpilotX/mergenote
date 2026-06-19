@@ -15,6 +15,7 @@ import { licenseApiRouter } from "./routes/license-api.js";
 import { webhooksRouter } from "./routes/webhooks.js";
 import { healthRouter } from "./routes/health.js";
 import { authRouter } from "./routes/auth.js";
+import { subscribeRouter } from "./routes/subscribe.js";
 import { errorHandler } from "./middleware/error-handler.js";
 
 const PORT = parseInt(process.env.PORT ?? process.env.BACKEND_PORT ?? "3100", 10);
@@ -45,7 +46,18 @@ app.use((req, _res, next) => {
 // -- Routes -------------------------------------------------------------------
 
 app.use(healthRouter);
+
+// Public config for frontend (PayPal client ID, plan IDs)
+app.get("/api/config", (_req, res) => {
+  res.json({
+    paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
+    paypalPlanIdPro: process.env.PAYPAL_PLAN_ID_PRO || "",
+    paypalPlanIdTeam: process.env.PAYPAL_PLAN_ID_TEAM || "",
+  });
+});
+
 app.use("/api/auth", authRouter);
+app.use("/api/subscribe", subscribeRouter);
 app.use("/api/licenses", licensesRouter);
 app.use("/api/license", licenseApiRouter);
 app.use("/api/webhooks", webhooksRouter);

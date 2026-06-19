@@ -580,7 +580,8 @@ html[data-theme="dark"] .pub-chip .pc-st{color:#7bd88f}
           <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"/></svg></span> Saved templates</li>
           <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"/></svg></span> Publish to GitHub, Slack, Notion</li>
         </ul>
-        <a class="btn btn-accent" href="#">Start free trial</a>
+        <a class="btn btn-accent" href="#" id="pro-btn" style="display:none">Start free trial</a>
+        <div id="paypal-btn-pro"></div>
         <div class="ppay"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg> Secure checkout via PayPal</div>
       </div>
       <div class="plan">
@@ -594,7 +595,8 @@ html[data-theme="dark"] .pub-chip .pc-st{color:#7bd88f}
           <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"/></svg></span> Shared org templates</li>
           <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"/></svg></span> Priority support</li>
         </ul>
-        <a class="btn btn-ghost" href="#">Contact sales</a>
+        <a class="btn btn-ghost" href="#" id="team-btn" style="display:none">Contact sales</a>
+        <div id="paypal-btn-team"></div>
       </div>
     </div>
   </div>
@@ -672,78 +674,55 @@ html[data-theme="dark"] .pub-chip .pc-st{color:#7bd88f}
   if(bm&&ba){bm.addEventListener('click',function(){setBilling(false);});ba.addEventListener('click',function(){setBilling(true);});}
 })();
 </script>
-<div id="dash-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);overflow-y:auto">
-  <div style="max-width:480px;margin:60px auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px">
-    <div id="dash-login" style="text-align:center">
-      <h2 style="margin-bottom:8px">Sign in to Mergenote</h2>
-      <p style="color:var(--muted);margin-bottom:24px;font-size:14px">Manage your license and unlock Pro features.</p>
-      <a id="gh-login-btn" href="" style="display:inline-flex;align-items:center;gap:8px;background:#24292e;color:#fff;padding:12px 24px;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.42.36.8 1.08.8 2.18v3.23c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
-        Continue with GitHub
-      </a>
-    </div>
-    <div id="dash-content" style="display:none">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
-        <img id="dash-avatar" style="width:48px;height:48px;border-radius:50%" src="" alt="">
-        <div><div id="dash-name" style="font-weight:700"></div><div id="dash-email" style="font-size:13px;color:var(--muted)"></div></div>
-        <button id="dash-logout" style="margin-left:auto;background:none;border:1px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;color:var(--ink);font-size:13px">Logout</button>
-      </div>
-      <div style="background:var(--inset);border-radius:10px;padding:16px;margin-bottom:16px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:var(--muted);font-size:13px">Tier</span><span id="dash-tier" style="font-weight:700"></span></div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:var(--muted);font-size:13px">Status</span><span id="dash-status"></span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:13px">License Key</span><code id="dash-key" style="font-size:12px;word-break:break-all"></code></div>
-      </div>
-      <div id="dash-setup" style="background:var(--inset);border-radius:10px;padding:16px;margin-bottom:16px">
-        <div style="font-weight:600;font-size:13px;margin-bottom:8px">Claude Desktop Config</div>
-        <pre id="dash-config" style="font-size:11px;overflow-x:auto;white-space:pre-wrap;color:var(--muted)"></pre>
-      </div>
-      <div id="dash-upgrade" style="display:none;text-align:center">
-        <a href="#pricing" onclick="document.getElementById('dash-modal').style.display='none'" class="btn btn-primary">Upgrade to Pro</a>
-      </div>
-    </div>
-    <button onclick="document.getElementById('dash-modal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:24px">&times;</button>
-  </div>
-</div>
 <script>
 (function(){
   var API='http://localhost:3100';
-  var modal=document.getElementById('dash-modal');
   var signinBtn=document.getElementById('nav-signin');
-  document.getElementById('gh-login-btn').href=API+'/api/auth/github';
 
-  signinBtn.addEventListener('click',function(e){e.preventDefault();modal.style.display='block';loadDash();});
+  signinBtn.addEventListener('click',function(e){e.preventDefault();location.href='/dashboard';});
 
-  // Handle OAuth callback
-  if(location.pathname==='/auth/callback'){
-    var code=new URLSearchParams(location.search).get('code');
-    if(code){fetch(API+'/api/auth/callback?code='+code,{credentials:'include'}).then(function(){location.href='/';});}
-  }
-
-  function loadDash(){
-    fetch(API+'/api/auth/me',{credentials:'include'}).then(function(r){return r.ok?r.json():null;}).then(function(data){
-      if(!data){document.getElementById('dash-login').style.display='block';document.getElementById('dash-content').style.display='none';return;}
-      document.getElementById('dash-login').style.display='none';
-      document.getElementById('dash-content').style.display='block';
-      document.getElementById('dash-avatar').src=data.user.avatar_url||'';
-      document.getElementById('dash-name').textContent='@'+data.user.github_login;
-      document.getElementById('dash-email').textContent=data.user.email||'';
-      var lic=data.license;
-      document.getElementById('dash-tier').textContent=lic?lic.tier:'free';
-      document.getElementById('dash-status').textContent=lic?lic.status:'no license';
-      document.getElementById('dash-key').textContent=lic?lic.license_key:'—';
-      document.getElementById('dash-upgrade').style.display=(!lic||lic.tier==='free')?'block':'none';
-      document.getElementById('dash-config').textContent=JSON.stringify({mcpServers:{mergenote:{command:"npx",args:["mergenote"],env:{GITHUB_TOKEN:"your_token",MERGENOTE_LICENSE:lic?lic.license_key:"your_key",LICENSE_API_URL:API}}}},null,2);
-      signinBtn.textContent='Dashboard';
-    }).catch(function(){});
-  }
-
-  document.getElementById('dash-logout').addEventListener('click',function(){
-    fetch(API+'/api/auth/logout',{method:'POST',credentials:'include'}).then(function(){location.reload();});
-  });
-
-  // Auto-check on load
+  // Check if logged in, update nav button text
   fetch(API+'/api/auth/me',{credentials:'include'}).then(function(r){return r.ok?r.json():null;}).then(function(data){
     if(data)signinBtn.textContent='Dashboard';
+  }).catch(function(){});
+
+  // Load PayPal config and render subscription buttons
+  fetch(API+'/api/config').then(function(r){return r.json();}).then(function(cfg){
+    if(!cfg.paypalClientId)return;
+    var script=document.createElement('script');
+    script.src='https://www.paypal.com/sdk/js?client-id='+cfg.paypalClientId+'&vault=true&intent=subscription';
+    script.setAttribute('data-sdk-integration-source','button-factory');
+    script.onload=function(){
+      renderBtn('paypal-btn-pro', cfg.paypalPlanIdPro, 'pro');
+      if(cfg.paypalPlanIdTeam) renderBtn('paypal-btn-team', cfg.paypalPlanIdTeam, 'team');
+    };
+    document.body.appendChild(script);
+
+    function renderBtn(containerId, planId, tier){
+      var container=document.getElementById(containerId);
+      if(!container||!planId)return;
+      paypal.Buttons({
+        style:{shape:'rect',color:'blue',layout:'vertical',label:'subscribe'},
+        createSubscription:function(data,actions){
+          return fetch(API+'/api/auth/me',{credentials:'include'}).then(function(r){
+            if(!r.ok){location.href='/dashboard';throw new Error('not logged in');}
+            return r.json();
+          }).then(function(me){
+            return actions.subscription.create({plan_id:planId,custom_id:me.user.id});
+          });
+        },
+        onApprove:function(data){
+          fetch(API+'/api/subscribe/activate',{
+            method:'POST',credentials:'include',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({subscriptionId:data.subscriptionID,planId:planId})
+          }).then(function(r){return r.json();}).then(function(){
+            location.href='/dashboard';
+          });
+        },
+        onError:function(err){console.error('PayPal error:',err);}
+      }).render('#'+containerId);
+    }
   }).catch(function(){});
 })();
 </script>

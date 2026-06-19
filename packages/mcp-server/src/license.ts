@@ -4,60 +4,57 @@ const FREE_STATUS: LicenseStatus = { valid: false, tier: "free" };
 
 let cachedStatus: LicenseStatus | null = null;
 
-/**
- * Returns the cached license status. Call `validateLicense` first to populate it.
- */
 export function getLicenseStatus(): LicenseStatus {
   return cachedStatus ?? FREE_STATUS;
 }
 
 /**
- * Validates the MERGENOTE_LICENSE key against the licensing backend.
- * Stores the result in memory so subsequent calls return instantly.
- *
- * If no license key is set, or the backend is unreachable, this returns
- * a free-tier status without throwing.
+ * Validates MERGENOTE_LICENSE_KEY against devpilotx.com (or LICENSE_API_URL override).
+ * Caches result for the session. Never throws — falls back to free on any failure.
  */
 export async function validateLicense(): Promise<LicenseStatus> {
-  const licenseKey = process.env.MERGENOTE_LICENSE;
-  if (!licenseKey) {
+  const key = process.env.MERGENOTE_LICENSE_KEY;
+  if (!key) {
     cachedStatus = FREE_STATUS;
     return cachedStatus;
   }
 
-  const baseUrl =
+  const url =
     process.env.LICENSE_API_URL?.replace(/\/+$/, "") ||
-    "http://localhost:3100";
+    "https://devpilotx.com/api/license/validate";
 
   try {
-    const response = await fetch(`${baseUrl}/api/license/validate`, {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: licenseKey }),
+      body: JSON.stringify({ key }),
+      signal: AbortSignal.timeout(5000),
     });
 
-    if (!response.ok) {
-      console.error(
-        `License validation returned ${response.status}. Falling back to free tier.`
-      );
+    if (!res.ok) {
+      console.error(`License validation returned ${res.status}. Falling back to free tier.`);
       cachedStatus = FREE_STATUS;
       return cachedStatus;
     }
 
-    const data = (await response.json()) as {
+    const data = (await res.json()) as {
       valid: boolean;
-      tier?: "free" | "pro";
+      tier?: "free" | "pro" | "team";
       email?: string;
-      expires_at?: string;
+      expires_at?: string | null;
     };
+
+    if (!data.valid) {
+      cachedStatus = FREE_STATUS;
+      return cachedStatus;
+    }
 
     cachedStatus = {
-      valid: data.valid,
-      tier: data.valid && data.tier === "pro" ? "pro" : "free",
+      valid: true,
+      tier: data.tier === "pro" || data.tier === "team" ? data.tier : "free",
       email: data.email,
-      expires_at: data.expires_at,
+      expires_at: data.expires_at ?? undefined,
     };
-
     return cachedStatus;
   } catch (err) {
     console.error(
@@ -68,21 +65,11 @@ export async function validateLicense(): Promise<LicenseStatus> {
   }
 }
 
-/**
- * Resets the cached license status. Useful in tests.
- */
 export function resetLicenseCache(): void {
   cachedStatus = null;
 }
 
-/**
- * Checks whether a given date range exceeds the free tier limit of 7 days.
- * Returns true if the range is within the allowed window.
- */
-export function isWithinFreeTierWindow(
-  since: Date,
-  until: Date
-): boolean {
+export function isWithinFreeTierWindow(since: Date, until: Date): boolean {
   const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
   return until.getTime() - since.getTime() <= sevenDaysMs;
 }

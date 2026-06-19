@@ -22,14 +22,14 @@ interface PayPalVerifyResponse {
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
 function getBaseUrl(): string {
-  const env = process.env.PAYPAL_ENV || "sandbox";
-  return env === "live"
+  const mode = process.env.PAYPAL_MODE || "sandbox";
+  return mode === "live"
     ? "https://api-m.paypal.com"
     : "https://api-m.sandbox.paypal.com";
 }
 
 function isSandbox(): boolean {
-  return (process.env.PAYPAL_ENV || "sandbox") !== "live";
+  return (process.env.PAYPAL_MODE || "sandbox") !== "live";
 }
 
 /**

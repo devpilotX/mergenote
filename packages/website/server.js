@@ -31,6 +31,15 @@ const server = createServer((req, res) => {
   // Remove leading slash and resolve file
   const filePath = join(__dirname, pathname);
 
+  // Serve dashboard page at /dashboard
+  if (pathname === '/dashboard' || pathname.startsWith('/dashboard?')) {
+    const dashPath = join(__dirname, 'dashboard.html');
+    const content = readFileSync(dashPath);
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(content);
+    return;
+  }
+
   if (!existsSync(filePath)) {
     // SPA fallback: serve index.html for non-file routes
     const indexPath = join(__dirname, 'index.html');
