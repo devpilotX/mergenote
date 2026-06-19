@@ -5,7 +5,7 @@ import { validateLicense, getLicenseStatus, resetLicenseCache } from "../src/lic
 // Mini HTTP server that mocks devpilotx.com/api/license/validate
 let mockServer: http.Server;
 let mockPort: number;
-let mockResponse: { status: number; body: unknown } = { status: 200, body: { valid: true, tier: "pro" } };
+let mockResponse: { status: number; body: unknown } = { status: 200, body: { valid: true, tier: "premium" } };
 
 function startMock(): Promise<void> {
   return new Promise((resolve) => {
@@ -48,16 +48,16 @@ describe("license validation — integration", () => {
     expect(getLicenseStatus().tier).toBe("free");
   });
 
-  it("Case B: valid key + pro response → pro tier", async () => {
+  it("Case B: valid key + premium response → premium tier", async () => {
     await startMock();
-    mockResponse = { status: 200, body: { valid: true, tier: "pro", email: "user@test.com", expires_at: null } };
+    mockResponse = { status: 200, body: { valid: true, tier: "premium", email: "user@test.com", expires_at: null } };
 
     process.env.MERGENOTE_LICENSE_KEY = "mn_live_test123";
     process.env.LICENSE_API_URL = `http://127.0.0.1:${mockPort}/api/license/validate`;
 
     const status = await validateLicense();
     expect(status.valid).toBe(true);
-    expect(status.tier).toBe("pro");
+    expect(status.tier).toBe("premium");
 
     await stopMock();
   });
@@ -86,7 +86,7 @@ describe("license validation — integration", () => {
     await stopMock();
   });
 
-  it("Case B2: valid key + team tier → team", async () => {
+  it("Case B2: valid key + unknown tier → free (only 'premium' unlocks)", async () => {
     await startMock();
     mockResponse = { status: 200, body: { valid: true, tier: "team", email: "admin@corp.com", expires_at: "2027-12-31T00:00:00Z" } };
 
@@ -95,7 +95,7 @@ describe("license validation — integration", () => {
 
     const status = await validateLicense();
     expect(status.valid).toBe(true);
-    expect(status.tier).toBe("team");
+    expect(status.tier).toBe("free");
 
     await stopMock();
   });

@@ -5,7 +5,7 @@ import { getLicenseStatus, isWithinFreeTierWindow } from "../license.js";
 
 const FREE_TIER_UPGRADE_MSG =
   "⚡ Free tier is limited to a 7-day PR window.\n\n" +
-  "Upgrade to Pro for unlimited history: https://devpilotx.com/pricing";
+  "Upgrade to Premium for unlimited history: https://devpilotx.com/pricing";
 
 const inputSchema = {
   owner: z.string().describe("GitHub repo owner"),

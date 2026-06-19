@@ -6,7 +6,7 @@ import { registerGetMergedPRs } from "../src/tools/get-merged-prs.js";
 
 // Mock the license module to control tier in tests
 vi.mock("../src/license.js", () => ({
-  getLicenseStatus: vi.fn(() => ({ valid: true, tier: "pro" })),
+  getLicenseStatus: vi.fn(() => ({ valid: true, tier: "premium" })),
   isWithinFreeTierWindow: vi.fn(() => true),
 }));
 
@@ -45,7 +45,7 @@ describe("get_merged_prs", () => {
     vi.clearAllMocks();
     mockedGetLicenseStatus.mockReturnValue({
       valid: true,
-      tier: "pro",
+      tier: "premium",
     });
     mockedIsWithinFreeTierWindow.mockReturnValue(true);
   });

@@ -21,7 +21,7 @@ import { validateBody, validateParam } from "../middleware/validate.js";
 
 // -- Types --
 
-export type Plan = "free" | "pro" | "team";
+export type Plan = "free" | "premium";
 export type Status = "active" | "revoked" | "expired";
 
 export interface LicenseRow {
@@ -59,7 +59,7 @@ licensesRouter.post(
   "/",
   validateBody([
     { name: "email", type: "string", required: true },
-    { name: "tier", type: "string", oneOf: ["free", "pro", "team"] }
+    { name: "tier", type: "string", oneOf: ["free", "premium"] }
   ]),
   async (req: Request, res: Response) => {
     const { email, tier } =
@@ -137,7 +137,7 @@ licensesRouter.put(
   validateParam("id"),
   validateBody([
     { name: "email", type: "string" },
-    { name: "tier", type: "string", oneOf: ["free", "pro", "team"] },
+    { name: "tier", type: "string", oneOf: ["free", "premium"] },
     {
       name: "status",
       type: "string",

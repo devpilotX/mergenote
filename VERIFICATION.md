@@ -62,7 +62,7 @@ https://github.com/devpilotX/mergenote/releases/tag/untagged-7197119d3c54f0e394a
 
 ## 6. No license required
 
-MCP server starts and all tools work with NO `MERGENOTE_LICENSE` env var set. No license validation on startup.
+MCP server starts and all tools work with NO `MERGENOTE_LICENSE_KEY` env var set. No license validation on startup.
 
 **Result:** PASS
 

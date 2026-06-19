@@ -64,7 +64,7 @@ describe("BILLING.SUBSCRIPTION.ACTIVATED handling", () => {
       id: 1,
       license_key: "mn_live_testkey12345678901234567890123456789012345678",
       email: "buyer@example.com",
-      tier: "pro",
+      tier: "premium",
       status: "active",
       paypal_subscription_id: "I-SUB123",
       created_at: new Date(),
@@ -82,13 +82,13 @@ describe("BILLING.SUBSCRIPTION.ACTIVATED handling", () => {
     // Simulate the INSERT query the webhook handler would run
     const result = await mockQuery(
       `INSERT INTO licenses (email, tier, license_key, paypal_subscription_id, status) VALUES ($1, $2, $3, $4, 'active') RETURNING *`,
-      ["buyer@example.com", "pro", "mn_live_testkey12345678901234567890123456789012345678", "I-SUB123"]
+      ["buyer@example.com", "premium", "mn_live_testkey12345678901234567890123456789012345678", "I-SUB123"]
     );
 
     expect(result.rows.length).toBe(1);
     const row = result.rows[0];
     expect(row.email).toBe("buyer@example.com");
-    expect(row.tier).toBe("pro");
+    expect(row.tier).toBe("premium");
     expect(row.status).toBe("active");
     expect(row.license_key).toMatch(/^mn_live_/);
   });
@@ -100,7 +100,7 @@ describe("BILLING.SUBSCRIPTION.CANCELLED handling", () => {
       id: 1,
       license_key: "mn_live_testkey12345678901234567890123456789012345678",
       email: "buyer@example.com",
-      tier: "pro",
+      tier: "premium",
       status: "revoked",
       paypal_subscription_id: "I-CANCEL123",
       created_at: new Date(),
@@ -135,7 +135,7 @@ describe("BILLING.SUBSCRIPTION.SUSPENDED handling", () => {
           id: 1,
           license_key: "mn_live_abc",
           email: "buyer@example.com",
-          tier: "pro",
+          tier: "premium",
           status: "revoked",
           paypal_subscription_id: "I-SUSPEND123",
           created_at: new Date(),

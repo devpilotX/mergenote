@@ -39,7 +39,7 @@ export async function validateLicense(): Promise<LicenseStatus> {
 
     const data = (await res.json()) as {
       valid: boolean;
-      tier?: "free" | "pro" | "team";
+      tier?: "free" | "premium";
       email?: string;
       expires_at?: string | null;
     };
@@ -51,7 +51,7 @@ export async function validateLicense(): Promise<LicenseStatus> {
 
     cachedStatus = {
       valid: true,
-      tier: data.tier === "pro" || data.tier === "team" ? data.tier : "free",
+      tier: data.tier === "premium" ? "premium" : "free",
       email: data.email,
       expires_at: data.expires_at ?? undefined,
     };

@@ -86,7 +86,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       document.getElementById('tier').textContent=lic?lic.tier:'free';
       document.getElementById('status').textContent=lic?lic.status:'no license';
       document.getElementById('key').textContent=lic?lic.license_key:'\u2014';
-      document.getElementById('config').textContent=JSON.stringify({mcpServers:{mergenote:{command:"npx",args:["mergenote"],env:{GITHUB_TOKEN:"your_token",MERGENOTE_LICENSE:lic?lic.license_key:"your_key",LICENSE_API_URL:API}}}},null,2);
+      document.getElementById('config').textContent=JSON.stringify({mcpServers:{mergenote:{command:"npx",args:["mergenote"],env:{GITHUB_TOKEN:"your_token",MERGENOTE_LICENSE_KEY:lic?lic.license_key:"your_key",LICENSE_API_URL:API}}}},null,2);
     }).catch(function(){});
 
   document.getElementById('logout-btn').addEventListener('click',function(){

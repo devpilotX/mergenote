@@ -22,13 +22,10 @@ export interface WebhookEvent {
   };
 }
 
-type Plan = "pro" | "team";
+type Plan = "premium";
 
-function planIdToTier(planId: string | undefined): Plan {
-  if (planId && process.env.PAYPAL_PLAN_ID_TEAM && planId === process.env.PAYPAL_PLAN_ID_TEAM) {
-    return "team";
-  }
-  return "pro";
+function planIdToTier(_planId: string | undefined): Plan {
+  return "premium";
 }
 
 export const webhooksRouter: IRouter = Router();

@@ -51,8 +51,7 @@ app.use(healthRouter);
 app.get("/api/config", (_req, res) => {
   res.json({
     paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
-    paypalPlanIdPro: process.env.PAYPAL_PLAN_ID_PRO || "",
-    paypalPlanIdTeam: process.env.PAYPAL_PLAN_ID_TEAM || "",
+    paypalPlanIdPremium: process.env.PAYPAL_PLAN_ID_PREMIUM || "",
   });
 });
 

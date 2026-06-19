@@ -30,7 +30,7 @@ export interface FieldRule {
  *   "/",
  *   validateBody([
  *     { name: "owner_email", type: "string", required: true },
- *     { name: "plan", type: "string", oneOf: ["free", "pro", "team"] },
+ *     { name: "plan", type: "string", oneOf: ["free", "premium"] },
  *   ]),
  *   createLicense,
  * );

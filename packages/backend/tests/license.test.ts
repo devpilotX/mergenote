@@ -63,13 +63,13 @@ describe("license validate logic", () => {
     expect(result.rows.length).toBe(0);
   });
 
-  it("returns active=true for an active pro license row", async () => {
+  it("returns active=true for an active premium license row", async () => {
     mockQuery.mockResolvedValueOnce({
       rows: [
         {
           license_key: "mn_live_abc123",
           email: "user@example.com",
-          tier: "pro",
+          tier: "premium",
           status: "active",
         },
       ],
@@ -86,7 +86,7 @@ describe("license validate logic", () => {
     expect(result.rows.length).toBe(1);
     const row = result.rows[0];
     expect(row.status).toBe("active");
-    expect(row.tier).toBe("pro");
+    expect(row.tier).toBe("premium");
     expect(row.email).toBe("user@example.com");
     // Validate logic: valid = status === "active"
     expect(row.status === "active").toBe(true);
@@ -98,7 +98,7 @@ describe("license validate logic", () => {
         {
           license_key: "mn_live_revoked",
           email: "user@example.com",
-          tier: "pro",
+          tier: "premium",
           status: "revoked",
         },
       ],
@@ -146,7 +146,7 @@ describe("license status query logic", () => {
         {
           license_key: "mn_live_abc",
           email: "user@example.com",
-          tier: "team",
+          tier: "premium",
           status: "active",
           created_at: created,
         },
@@ -171,7 +171,7 @@ describe("license status query logic", () => {
     };
     expect(statusResponse).toEqual({
       key: "mn_live_abc",
-      tier: "team",
+      tier: "premium",
       status: "active",
       email: "user@example.com",
       created_at: "2026-01-15T10:00:00.000Z",

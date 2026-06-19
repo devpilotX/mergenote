@@ -8,7 +8,7 @@
 - **`generate_changelog`** - Group PRs by category (Added, Fixed, Changed, etc.) and render a formatted changelog in markdown
 - **`post_changelog`** - Post the changelog back to GitHub as a file commit, pull request, or GitHub Release
 
-Free tier: 7-day PR window. Pro tier: unlimited history, larger repos.
+Free tier: 7-day PR window. Premium tier: unlimited history, larger repos.
 
 ## Architecture
 
@@ -54,7 +54,7 @@ Required variables:
 | `PAYPAL_CLIENT_SECRET` | PayPal app client secret (sandbox) |
 | `PAYPAL_WEBHOOK_ID` | PayPal webhook ID (from developer dashboard) |
 | `PAYPAL_ENV` | `sandbox` or `live` |
-| `MERGENOTE_LICENSE` | License key for MCP server (unlocks pro features) |
+| `MERGENOTE_LICENSE_KEY` | License key for MCP server (unlocks premium features) |
 | `LICENSE_API_URL` | Backend URL for license validation (default: `http://localhost:3100`) |
 | `LICENSE_API_SECRET` | Shared secret for backend auth |
 | `BACKEND_PORT` | Port for licensing backend (default: `3100`) |
@@ -116,7 +116,7 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
       "args": ["C:/path/to/mergenote/packages/mcp-server/dist/index.js"],
       "env": {
         "GITHUB_TOKEN": "your_token",
-        "MERGENOTE_LICENSE": "mn_live_...",
+        "MERGENOTE_LICENSE_KEY": "mn_live_...",
         "LICENSE_API_URL": "http://localhost:3100"
       }
     }

@@ -13,7 +13,7 @@ export interface PullRequest {
 
 export interface LicenseStatus {
   valid: boolean;
-  tier: "free" | "pro" | "team";
+  tier: "free" | "premium";
   email?: string;
   expires_at?: string;
 }

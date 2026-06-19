@@ -29,7 +29,7 @@ Headers: `Content-Type: application/json`
 ```json
 {
   "valid": true,
-  "tier": "pro",
+  "tier": "premium",
   "email": "user@example.com",
   "expires_at": "2027-01-15T00:00:00Z"
 }
@@ -38,7 +38,7 @@ Headers: `Content-Type: application/json`
 | Field        | Type                           | Required | Description                                              |
 |--------------|--------------------------------|----------|----------------------------------------------------------|
 | `valid`      | boolean                        | yes      | Whether the key is active and recognized                 |
-| `tier`       | `"free"` \| `"pro"` \| `"team"` | yes      | The feature tier granted by this key                     |
+| `tier`       | `"free"` \| `"premium"`         | yes      | The feature tier granted by this key                     |
 | `email`      | string \| null                 | no       | Account email (informational only)                       |
 | `expires_at` | ISO 8601 string \| null        | no       | When the license expires; null = no expiry               |
 
@@ -57,7 +57,7 @@ Headers: `Content-Type: application/json`
 - **No key set** (`MERGENOTE_LICENSE_KEY` empty/missing): skip call, treat as free.
 - **`valid: false`**: treat as free regardless of tier value.
 - **Network error / timeout / non-200**: treat as free, log warning, never crash.
-- **`valid: true` + `tier: "pro"` or `"team"`**: unlock Pro features (unlimited date range).
+- **`valid: true` + `tier: "premium"`**: unlock Premium features (unlimited date range).
 - Validation runs once on server startup; result cached for the session lifetime.
 
 ## Env vars consumed by MCP server
