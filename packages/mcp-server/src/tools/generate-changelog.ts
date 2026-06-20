@@ -10,6 +10,7 @@ const prSchema = z.object({
   labels: z.array(z.string()),
   merged_at: z.string(),
   body: z.string().optional().default(""),
+  url: z.string().optional(),
 });
 
 const inputSchema = {

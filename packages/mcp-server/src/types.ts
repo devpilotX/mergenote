@@ -9,6 +9,10 @@ export interface PullRequest {
   labels: string[];
   merged_at: string;
   body: string;
+  // Canonical GitHub URL of the pull request, e.g.
+  // https://github.com/owner/repo/pull/123. Optional so callers can still
+  // pass PRs inline without it.
+  url?: string;
 }
 
 export interface LicenseStatus {
