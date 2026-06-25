@@ -1,6 +1,6 @@
 {
   "name": "mergenote",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MCP server that turns merged GitHub PRs into clean release notes",
   "type": "module",
   "main": "dist/index.js",

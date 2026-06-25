@@ -263,7 +263,10 @@ export function groupPRs(
  * Formats a single PR as a bullet point.
  */
 function formatItem(pr: PullRequest): string {
-  return `- ${pr.title} ([#${pr.number}](https://github.com/${pr.author})) by @${pr.author}`;
+  // Link to the real pull request when we have its URL, otherwise just show
+  // the number so we never emit a broken link.
+  const ref = pr.url ? `[#${pr.number}](${pr.url})` : `#${pr.number}`;
+  return `- ${pr.title} (${ref}) by @${pr.author}`;
 }
 
 /**

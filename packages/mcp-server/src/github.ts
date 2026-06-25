@@ -121,6 +121,7 @@ export async function fetchMergedPRs(
         labels: prLabels,
         merged_at: pr.merged_at,
         body: bodyTruncated,
+        url: pr.html_url,
       });
     }
 

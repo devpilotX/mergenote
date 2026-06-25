@@ -190,4 +190,36 @@ describe("renderChangelog", () => {
     const output = renderChangelog(sections, "keepachangelog", "v1.0.0", "2026-06-15");
     expect(output.endsWith("\n")).toBe(true);
   });
+
+  it("should link to the real pull request URL when present", () => {
+    const withUrl: ChangelogSection[] = [
+      {
+        heading: "Added",
+        items: [
+          makePR({
+            number: 42,
+            title: "Add dark mode",
+            author: "alice",
+            url: "https://github.com/acme/app/pull/42",
+          }),
+        ],
+      },
+    ];
+    const keep = renderChangelog(withUrl, "keepachangelog", "v1.2.0", "2026-06-15");
+    const minimal = renderChangelog(withUrl, "minimal", "v1.2.0", "2026-06-15");
+
+    expect(keep).toContain("[#42](https://github.com/acme/app/pull/42)");
+    expect(minimal).toContain("[#42](https://github.com/acme/app/pull/42)");
+    // Never link a PR number to a user profile.
+    expect(keep).not.toContain("github.com/alice)");
+  });
+
+  it("should fall back to a plain number when no URL is present", () => {
+    const noUrl: ChangelogSection[] = [
+      { heading: "Fixed", items: [makePR({ number: 7, title: "Fix bug", author: "bob" })] },
+    ];
+    const output = renderChangelog(noUrl, "minimal", "v1.0.0", "2026-06-15");
+    expect(output).toContain("(#7)");
+    expect(output).not.toContain("](https://github.com");
+  });
 });
