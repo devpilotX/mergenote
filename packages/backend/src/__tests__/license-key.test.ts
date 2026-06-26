@@ -18,9 +18,7 @@ describe("generateLicenseKey", () => {
   });
 
   it("should generate unique keys across 200 invocations", () => {
-    const keys = new Set(
-      Array.from({ length: 200 }, () => generateLicenseKey()),
-    );
+    const keys = new Set(Array.from({ length: 200 }, () => generateLicenseKey()));
     expect(keys.size).toBe(200);
   });
 

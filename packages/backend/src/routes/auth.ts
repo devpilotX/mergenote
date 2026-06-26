@@ -22,12 +22,15 @@ if (!JWT_SECRET) {
 const pendingStates = new Map<string, number>();
 
 // Clean expired states every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, ts] of pendingStates) {
-    if (now - ts > 10 * 60 * 1000) pendingStates.delete(key);
-  }
-}, 5 * 60 * 1000).unref();
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [key, ts] of pendingStates) {
+      if (now - ts > 10 * 60 * 1000) pendingStates.delete(key);
+    }
+  },
+  5 * 60 * 1000,
+).unref();
 
 interface GitHubUser {
   id: number;
@@ -80,7 +83,11 @@ authRouter.get("/callback", async (req: Request, res: Response) => {
     const tokenResp = await fetch("https://github.com/login/oauth/access_token", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ client_id: GITHUB_CLIENT_ID, client_secret: GITHUB_CLIENT_SECRET, code }),
+      body: JSON.stringify({
+        client_id: GITHUB_CLIENT_ID,
+        client_secret: GITHUB_CLIENT_SECRET,
+        code,
+      }),
     });
     const tokenData = (await tokenResp.json()) as { access_token?: string; error?: string };
     if (!tokenData.access_token) {
@@ -109,7 +116,9 @@ authRouter.get("/callback", async (req: Request, res: Response) => {
     const user = result.rows[0];
 
     // Sign JWT and set cookie
-    const token = jwt.sign({ userId: user.id, githubLogin: user.github_login }, JWT_SECRET!, { expiresIn: "7d" });
+    const token = jwt.sign({ userId: user.id, githubLogin: user.github_login }, JWT_SECRET!, {
+      expiresIn: "7d",
+    });
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
@@ -127,14 +136,18 @@ authRouter.get("/callback", async (req: Request, res: Response) => {
 /** GET /api/auth/me — Get current user from JWT cookie */
 authRouter.get("/me", async (req: Request, res: Response) => {
   const token = req.cookies?.token;
-  if (!token) { res.status(401).json({ error: "Not authenticated" }); return; }
+  if (!token) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
 
   try {
     const payload = jwt.verify(token, JWT_SECRET!) as { userId: string; githubLogin: string };
-    const userResult = await query<UserRow>(
-      `SELECT * FROM users WHERE id = $1`, [payload.userId],
-    );
-    if (userResult.rows.length === 0) { res.status(401).json({ error: "User not found" }); return; }
+    const userResult = await query<UserRow>(`SELECT * FROM users WHERE id = $1`, [payload.userId]);
+    if (userResult.rows.length === 0) {
+      res.status(401).json({ error: "User not found" });
+      return;
+    }
     const user = userResult.rows[0];
 
     const licenseResult = await query(
@@ -143,7 +156,15 @@ authRouter.get("/me", async (req: Request, res: Response) => {
     );
     const license = licenseResult.rows[0] || null;
 
-    res.json({ user: { id: user.id, github_login: user.github_login, email: user.email, avatar_url: user.avatar_url }, license });
+    res.json({
+      user: {
+        id: user.id,
+        github_login: user.github_login,
+        email: user.email,
+        avatar_url: user.avatar_url,
+      },
+      license,
+    });
   } catch {
     res.status(401).json({ error: "Invalid token" });
   }

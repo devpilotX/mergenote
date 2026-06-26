@@ -10,22 +10,10 @@ const FREE_TIER_UPGRADE_MSG =
 const inputSchema = {
   owner: z.string().describe("GitHub repo owner"),
   repo: z.string().describe("GitHub repo name"),
-  from_tag: z
-    .string()
-    .optional()
-    .describe('Start tag, e.g. "v1.0.0"'),
-  to_tag: z
-    .string()
-    .optional()
-    .describe('End tag, e.g. "v1.1.0". Defaults to HEAD'),
-  from_date: z
-    .string()
-    .optional()
-    .describe("Start date as ISO string"),
-  to_date: z
-    .string()
-    .optional()
-    .describe("End date as ISO string"),
+  from_tag: z.string().optional().describe('Start tag, e.g. "v1.0.0"'),
+  to_tag: z.string().optional().describe('End tag, e.g. "v1.1.0". Defaults to HEAD'),
+  from_date: z.string().optional().describe("Start date as ISO string"),
+  to_date: z.string().optional().describe("End date as ISO string"),
   label_filter: z
     .array(z.string())
     .optional()
@@ -39,34 +27,27 @@ export function registerGetMergedPRs(server: McpServer): void {
     inputSchema,
     async (args) => {
       try {
-        const { owner, repo, from_tag, to_tag, from_date, to_date, label_filter } =
-          args;
+        const { owner, repo, from_tag, to_tag, from_date, to_date, label_filter } = args;
 
         let since: Date;
         let until: Date;
 
         if (from_tag) {
           since = await getTagDate(owner, repo, from_tag);
-          until = to_tag
-            ? await getTagDate(owner, repo, to_tag)
-            : new Date();
+          until = to_tag ? await getTagDate(owner, repo, to_tag) : new Date();
         } else if (from_date) {
           since = new Date(from_date);
           until = to_date ? new Date(to_date) : new Date();
 
           if (isNaN(since.getTime())) {
             return {
-              content: [
-                { type: "text", text: "Invalid from_date. Use ISO 8601 format." },
-              ],
+              content: [{ type: "text", text: "Invalid from_date. Use ISO 8601 format." }],
               isError: true,
             };
           }
           if (isNaN(until.getTime())) {
             return {
-              content: [
-                { type: "text", text: "Invalid to_date. Use ISO 8601 format." },
-              ],
+              content: [{ type: "text", text: "Invalid to_date. Use ISO 8601 format." }],
               isError: true,
             };
           }
@@ -96,8 +77,7 @@ export function registerGetMergedPRs(server: McpServer): void {
           ],
         };
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : String(err);
+        const message = err instanceof Error ? err.message : String(err);
 
         if (message.includes("rate limit") || message.includes("403")) {
           return {
@@ -116,6 +96,6 @@ export function registerGetMergedPRs(server: McpServer): void {
           isError: true,
         };
       }
-    }
+    },
   );
 }

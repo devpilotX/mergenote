@@ -16,30 +16,24 @@ const prSchema = z.object({
 const inputSchema = {
   prs: z
     .array(prSchema)
-    .describe(
-      "Array of PR objects from get_merged_prs output, or provided inline"
-    ),
+    .describe("Array of PR objects from get_merged_prs output, or provided inline"),
   style: z
     .enum(["smart", "raw"])
     .default("smart")
-    .describe("'smart' (default): filters noise, groups by meaning, includes rewrite prompt for the AI. 'raw': mechanical grouping with raw PR titles."),
+    .describe(
+      "'smart' (default): filters noise, groups by meaning, includes rewrite prompt for the AI. 'raw': mechanical grouping with raw PR titles.",
+    ),
   template: z
     .enum(["keepachangelog", "minimal", "custom"])
     .default("keepachangelog")
     .describe("Changelog format template (only used in raw mode)"),
-  version: z
-    .string()
-    .optional()
-    .describe('Version string, e.g. "v2.4.0"'),
-  date: z
-    .string()
-    .optional()
-    .describe("Release date in YYYY-MM-DD format. Defaults to today"),
+  version: z.string().optional().describe('Version string, e.g. "v2.4.0"'),
+  date: z.string().optional().describe("Release date in YYYY-MM-DD format. Defaults to today"),
   custom_sections: z
     .record(z.array(z.string()))
     .optional()
     .describe(
-      "Custom section mapping (raw mode only): keys are section headings, values are arrays of label patterns"
+      "Custom section mapping (raw mode only): keys are section headings, values are arrays of label patterns",
     ),
   include_internal: z
     .boolean()
@@ -54,19 +48,10 @@ export function registerGenerateChangelog(server: McpServer): void {
     inputSchema,
     async (args) => {
       try {
-        const {
-          prs,
-          style,
-          template,
-          version,
-          date,
-          custom_sections,
-          include_internal,
-        } = args;
+        const { prs, style, template, version, date, custom_sections, include_internal } = args;
 
         const resolvedVersion = version ?? "Unreleased";
-        const resolvedDate =
-          date ?? new Date().toISOString().slice(0, 10);
+        const resolvedDate = date ?? new Date().toISOString().slice(0, 10);
 
         const typedPRs: PullRequest[] = prs.map((pr) => ({
           ...pr,
@@ -80,11 +65,7 @@ export function registerGenerateChangelog(server: McpServer): void {
         }
 
         // Raw mode: original mechanical grouping
-        const sections = groupPRs(
-          typedPRs,
-          include_internal,
-          custom_sections
-        );
+        const sections = groupPRs(typedPRs, include_internal, custom_sections);
 
         if (sections.length === 0) {
           return {
@@ -101,15 +82,14 @@ export function registerGenerateChangelog(server: McpServer): void {
           sections,
           template as ChangelogTemplate,
           resolvedVersion,
-          resolvedDate
+          resolvedDate,
         );
 
         return {
           content: [{ type: "text", text: changelog }],
         };
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : String(err);
+        const message = err instanceof Error ? err.message : String(err);
         return {
           content: [
             {
@@ -120,6 +100,6 @@ export function registerGenerateChangelog(server: McpServer): void {
           isError: true,
         };
       }
-    }
+    },
   );
 }

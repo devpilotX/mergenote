@@ -58,7 +58,7 @@ export async function validateLicense(): Promise<LicenseStatus> {
     return cachedStatus;
   } catch (err) {
     console.error(
-      `License validation failed: ${err instanceof Error ? err.message : String(err)}. Falling back to free tier.`
+      `License validation failed: ${err instanceof Error ? err.message : String(err)}. Falling back to free tier.`,
     );
     cachedStatus = FREE_STATUS;
     return cachedStatus;

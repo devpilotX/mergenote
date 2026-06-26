@@ -2,14 +2,20 @@ import type { PullRequest, ChangelogSection, ChangelogTemplate } from "./types.j
 
 // ── Noise detection ────────────────────────────────────────────────────
 
-const BOT_PATTERNS = [/release-bot$/i, /\[bot\]$/i, /^dependabot$/i, /^renovate$/i, /^github-actions$/i];
+const BOT_PATTERNS = [
+  /release-bot$/i,
+  /\[bot\]$/i,
+  /^dependabot$/i,
+  /^renovate$/i,
+  /^github-actions$/i,
+];
 const NOISE_TITLE_PATTERNS = [
-  /^revert\s+"revert/i,              // revert-of-revert
-  /^bump\s/i,                         // dependency bumps
-  /^update.*\bto\b.*\d/i,            // "Update X to v1.2.3"
-  /^upgrade\s/i,                      // "Upgrade React from X to Y"
-  /^\[ci\]/i,                         // CI-only
-  /^chore\(deps\)/i,                  // chore(deps): bump
+  /^revert\s+"revert/i, // revert-of-revert
+  /^bump\s/i, // dependency bumps
+  /^update.*\bto\b.*\d/i, // "Update X to v1.2.3"
+  /^upgrade\s/i, // "Upgrade React from X to Y"
+  /^\[ci\]/i, // CI-only
+  /^chore\(deps\)/i, // chore(deps): bump
 ];
 
 function isBot(author: string): boolean {
@@ -30,8 +36,7 @@ const SMART_SECTIONS: { heading: string; match: (pr: PullRequest) => boolean }[]
   {
     heading: "New Features",
     match: (pr) =>
-      pr.labels.some((l) => /feature|enhancement/i.test(l)) ||
-      /^feat[:(]/i.test(pr.title),
+      pr.labels.some((l) => /feature|enhancement/i.test(l)) || /^feat[:(]/i.test(pr.title),
   },
   {
     heading: "Bug Fixes",
@@ -58,7 +63,10 @@ export interface SmartSection {
 /**
  * Filters noise, groups meaningfully, returns structured data for smart mode.
  */
-export function groupSmartPRs(prs: PullRequest[]): { sections: SmartSection[]; maintenance: SmartSection | null } {
+export function groupSmartPRs(prs: PullRequest[]): {
+  sections: SmartSection[];
+  maintenance: SmartSection | null;
+} {
   const meaningful = prs.filter((pr) => !isNoise(pr));
   const maintenance = prs.filter((pr) => isNoise(pr));
 
@@ -91,14 +99,28 @@ export function groupSmartPRs(prs: PullRequest[]): { sections: SmartSection[]; m
     if (buckets[sec.heading].length > 0) {
       sections.push({
         heading: sec.heading,
-        items: buckets[sec.heading].map((pr) => ({ number: pr.number, title: pr.title, author: pr.author, body: pr.body.slice(0, 200) })),
+        items: buckets[sec.heading].map((pr) => ({
+          number: pr.number,
+          title: pr.title,
+          author: pr.author,
+          body: pr.body.slice(0, 200),
+        })),
       });
     }
   }
 
-  const maintenanceSection: SmartSection | null = maintenance.length > 0
-    ? { heading: "Maintenance", items: maintenance.map((pr) => ({ number: pr.number, title: pr.title, author: pr.author, body: "" })) }
-    : null;
+  const maintenanceSection: SmartSection | null =
+    maintenance.length > 0
+      ? {
+          heading: "Maintenance",
+          items: maintenance.map((pr) => ({
+            number: pr.number,
+            title: pr.title,
+            author: pr.author,
+            body: "",
+          })),
+        }
+      : null;
 
   return { sections, maintenance: maintenanceSection };
 }
@@ -107,11 +129,7 @@ export function groupSmartPRs(prs: PullRequest[]): { sections: SmartSection[]; m
  * Renders the smart changelog output: a deterministic fallback summary
  * followed by a rewrite prompt for the host AI.
  */
-export function renderSmartChangelog(
-  prs: PullRequest[],
-  version: string,
-  date: string
-): string {
+export function renderSmartChangelog(prs: PullRequest[], version: string, date: string): string {
   const { sections, maintenance } = groupSmartPRs(prs);
 
   if (sections.length === 0 && !maintenance) {
@@ -206,7 +224,7 @@ function extractConventionalPrefix(title: string): string | null {
 export function groupPRs(
   prs: PullRequest[],
   includeInternal: boolean,
-  customSections?: Record<string, string[]>
+  customSections?: Record<string, string[]>,
 ): ChangelogSection[] {
   const sectionMap = customSections ?? DEFAULT_SECTIONS;
   const buckets: Record<string, PullRequest[]> = {};
@@ -223,7 +241,7 @@ export function groupPRs(
     // First try label matching
     for (const [heading, patterns] of Object.entries(sectionMap)) {
       const matches = pr.labels.some((label) =>
-        patterns.some((p) => label.toLowerCase().includes(p.toLowerCase()))
+        patterns.some((p) => label.toLowerCase().includes(p.toLowerCase())),
       );
       if (matches) {
         buckets[heading].push(pr);
@@ -274,11 +292,7 @@ function formatItem(pr: PullRequest): string {
  *
  * https://keepachangelog.com/en/1.1.0/
  */
-function renderKeepAChangelog(
-  sections: ChangelogSection[],
-  version: string,
-  date: string
-): string {
+function renderKeepAChangelog(sections: ChangelogSection[], version: string, date: string): string {
   const lines: string[] = [];
   lines.push(`## [${version}] - ${date}`);
   lines.push("");
@@ -298,11 +312,7 @@ function renderKeepAChangelog(
 /**
  * Renders a minimal changelog -- just a flat bullet list, no section headers.
  */
-function renderMinimal(
-  sections: ChangelogSection[],
-  version: string,
-  date: string
-): string {
+function renderMinimal(sections: ChangelogSection[], version: string, date: string): string {
   const lines: string[] = [];
   lines.push(`## ${version} (${date})`);
   lines.push("");
@@ -324,7 +334,7 @@ export function renderChangelog(
   sections: ChangelogSection[],
   template: ChangelogTemplate,
   version: string,
-  date: string
+  date: string,
 ): string {
   switch (template) {
     case "keepachangelog":

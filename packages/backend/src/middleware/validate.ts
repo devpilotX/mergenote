@@ -50,15 +50,11 @@ export function validateBody(rules: FieldRule[]) {
 
       if (rule.required) {
         if (value === undefined || value === null) {
-          res
-            .status(400)
-            .json({ error: `Field '${rule.name}' is required` });
+          res.status(400).json({ error: `Field '${rule.name}' is required` });
           return;
         }
         if (rule.type === "string" && (value as string) === "") {
-          res
-            .status(400)
-            .json({ error: `Field '${rule.name}' must not be empty` });
+          res.status(400).json({ error: `Field '${rule.name}' must not be empty` });
           return;
         }
       }
@@ -93,12 +89,9 @@ export function validateParam(paramName: string) {
     const value = req.params[paramName];
     const strValue = Array.isArray(value) ? value[0] : value;
     if (!strValue || strValue.trim() === "") {
-      res
-        .status(400)
-        .json({ error: `URL parameter '${paramName}' is required` });
+      res.status(400).json({ error: `URL parameter '${paramName}' is required` });
       return;
     }
     next();
   };
 }
-

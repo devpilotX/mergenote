@@ -12,9 +12,7 @@ export function getOctokit(): Octokit {
 
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
-    throw new Error(
-      "GITHUB_TOKEN is not set. Add it to your environment to use the GitHub tools."
-    );
+    throw new Error("GITHUB_TOKEN is not set. Add it to your environment to use the GitHub tools.");
   }
 
   octokitInstance = new Octokit({ auth: token });
@@ -31,11 +29,7 @@ export function resetOctokit(): void {
 /**
  * Gets the commit date for a given tag in a repository.
  */
-export async function getTagDate(
-  owner: string,
-  repo: string,
-  tag: string
-): Promise<Date> {
+export async function getTagDate(owner: string, repo: string, tag: string): Promise<Date> {
   const octokit = getOctokit();
 
   // Resolve the tag ref to a commit SHA
@@ -66,7 +60,7 @@ export async function fetchMergedPRs(
   repo: string,
   since: Date,
   until: Date,
-  labelFilter?: string[]
+  labelFilter?: string[],
 ): Promise<PullRequest[]> {
   const octokit = getOctokit();
   const results: PullRequest[] = [];
@@ -130,9 +124,7 @@ export async function fetchMergedPRs(
   }
 
   // Sort by merge date ascending
-  results.sort(
-    (a, b) => new Date(a.merged_at).getTime() - new Date(b.merged_at).getTime()
-  );
+  results.sort((a, b) => new Date(a.merged_at).getTime() - new Date(b.merged_at).getTime());
 
   return results;
 }
@@ -146,7 +138,7 @@ export async function createOrUpdateFile(
   path: string,
   content: string,
   message: string,
-  branch?: string
+  branch?: string,
 ): Promise<string> {
   const octokit = getOctokit();
 
@@ -182,11 +174,7 @@ export async function createOrUpdateFile(
 /**
  * Creates a branch from the default branch of a repository.
  */
-export async function createBranch(
-  owner: string,
-  repo: string,
-  branchName: string
-): Promise<void> {
+export async function createBranch(owner: string, repo: string, branchName: string): Promise<void> {
   const octokit = getOctokit();
 
   const repoData = await octokit.repos.get({ owner, repo });
@@ -215,7 +203,7 @@ export async function openPullRequest(
   title: string,
   body: string,
   head: string,
-  base?: string
+  base?: string,
 ): Promise<string> {
   const octokit = getOctokit();
 
@@ -245,7 +233,7 @@ export async function createGitHubRelease(
   tagName: string,
   name: string,
   body: string,
-  draft: boolean
+  draft: boolean,
 ): Promise<string> {
   const octokit = getOctokit();
 

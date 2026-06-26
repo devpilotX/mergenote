@@ -30,11 +30,14 @@ app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3200", cred
 app.use(cookieParser());
 
 // Capture raw body for webhook signature verification
-app.use("/api/webhooks", express.json({
-  verify: (req, _res, buf) => {
-    (req as unknown as Record<string, Buffer>).rawBody = buf;
-  },
-}));
+app.use(
+  "/api/webhooks",
+  express.json({
+    verify: (req, _res, buf) => {
+      (req as unknown as Record<string, Buffer>).rawBody = buf;
+    },
+  }),
+);
 app.use(express.json());
 
 // Request logging
@@ -76,9 +79,7 @@ if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
 }
 
 const server = app.listen(PORT, HOST, () => {
-  console.log(
-    `[startup] Mergenote licensing backend listening on http://${HOST}:${PORT}`,
-  );
+  console.log(`[startup] Mergenote licensing backend listening on http://${HOST}:${PORT}`);
 });
 
 export { server };

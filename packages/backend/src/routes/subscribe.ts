@@ -1,10 +1,10 @@
 /**
  * Subscription routes - called by frontend after PayPal subscription is approved.
- * 
+ *
  * POST /api/subscribe/activate
  * Body: { subscriptionId, planId }
  * Requires: authenticated user (JWT cookie)
- * 
+ *
  * This creates the license immediately for the logged-in user.
  * The webhook also handles it (idempotent) for production reliability.
  */
@@ -29,7 +29,10 @@ subscribeRouter.post("/activate", async (req: Request, res: Response) => {
   try {
     // Require auth
     const token = req.cookies?.token;
-    if (!token) { res.status(401).json({ error: "Not authenticated" }); return; }
+    if (!token) {
+      res.status(401).json({ error: "Not authenticated" });
+      return;
+    }
 
     const payload = jwt.verify(token, JWT_SECRET) as { userId: string; githubLogin: string };
     const { subscriptionId, planId } = req.body as { subscriptionId?: string; planId?: string };
@@ -51,7 +54,9 @@ subscribeRouter.post("/activate", async (req: Request, res: Response) => {
       [generateLicenseKey(), payload.userId, tier, subscriptionId],
     );
 
-    console.log(`[subscribe] Activated ${tier} for user ${payload.userId} (sub: ${subscriptionId})`);
+    console.log(
+      `[subscribe] Activated ${tier} for user ${payload.userId} (sub: ${subscriptionId})`,
+    );
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("[subscribe] Error:", err);

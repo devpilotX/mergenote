@@ -32,7 +32,9 @@ export const webhooksRouter: IRouter = Router();
 
 webhooksRouter.post("/paypal", async (req: Request, res: Response) => {
   try {
-    const rawBody = ((req as unknown as Record<string, Buffer>).rawBody ?? Buffer.from("")).toString("utf-8");
+    const rawBody = (
+      (req as unknown as Record<string, Buffer>).rawBody ?? Buffer.from("")
+    ).toString("utf-8");
 
     const verified = await verifyWebhookSignature(
       req.headers as Record<string, string | string[] | undefined>,
@@ -70,7 +72,9 @@ webhooksRouter.post("/paypal", async (req: Request, res: Response) => {
           [generateLicenseKey(), email, tier, subscriptionId, userId],
         );
 
-        console.log(`[webhook] Activated ${tier} license for ${email} (sub: ${subscriptionId}, user: ${userId})`);
+        console.log(
+          `[webhook] Activated ${tier} license for ${email} (sub: ${subscriptionId}, user: ${userId})`,
+        );
         res.status(201).json(result.rows[0]);
         return;
       }

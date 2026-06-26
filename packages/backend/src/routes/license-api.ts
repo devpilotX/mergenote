@@ -38,7 +38,7 @@ licenseApiRouter.post("/validate", async (req: Request, res: Response) => {
 
   const result = await query<LicenseRow>(
     `SELECT license_key, email, tier, status FROM licenses WHERE license_key = $1 LIMIT 1`,
-    [key.trim()]
+    [key.trim()],
   );
 
   if (result.rows.length === 0) {
@@ -74,7 +74,7 @@ licenseApiRouter.get("/status", async (req: Request, res: Response) => {
 
   const result = await query<LicenseRow>(
     `SELECT license_key, email, tier, status, created_at FROM licenses WHERE license_key = $1 LIMIT 1`,
-    [key.trim()]
+    [key.trim()],
   );
 
   if (result.rows.length === 0) {

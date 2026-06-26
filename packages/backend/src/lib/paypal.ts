@@ -23,9 +23,7 @@ let cachedToken: { token: string; expiresAt: number } | null = null;
 
 function getBaseUrl(): string {
   const mode = process.env.PAYPAL_MODE || "sandbox";
-  return mode === "live"
-    ? "https://api-m.paypal.com"
-    : "https://api-m.sandbox.paypal.com";
+  return mode === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
 }
 
 function isSandbox(): boolean {
@@ -49,9 +47,7 @@ export async function getAccessToken(): Promise<string> {
     throw new Error("PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET must be set");
   }
 
-  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString(
-    "base64",
-  );
+  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
   const res = await fetch(`${getBaseUrl()}/v1/oauth2/token`, {
     method: "POST",
@@ -104,13 +100,7 @@ export async function verifyWebhookSignature(
   const authAlgo = h("paypal-auth-algo");
   const transmissionSig = h("paypal-transmission-sig");
 
-  if (
-    !transmissionId ||
-    !transmissionTime ||
-    !certUrl ||
-    !authAlgo ||
-    !transmissionSig
-  ) {
+  if (!transmissionId || !transmissionTime || !certUrl || !authAlgo || !transmissionSig) {
     console.warn("[paypal] Missing required webhook verification headers");
     return isSandbox();
   }
@@ -128,31 +118,24 @@ export async function verifyWebhookSignature(
       webhook_event: JSON.parse(rawBody),
     };
 
-    const res = await fetch(
-      `${getBaseUrl()}/v1/notifications/verify-webhook-signature`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(verifyPayload),
+    const res = await fetch(`${getBaseUrl()}/v1/notifications/verify-webhook-signature`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify(verifyPayload),
+    });
 
     if (!res.ok) {
       const text = await res.text();
-      console.warn(
-        `[paypal] Webhook verification request failed (${res.status}): ${text}`,
-      );
+      console.warn(`[paypal] Webhook verification request failed (${res.status}): ${text}`);
       return isSandbox();
     }
 
     const data = (await res.json()) as PayPalVerifyResponse;
     if (data.verification_status !== "SUCCESS") {
-      console.warn(
-        `[paypal] Webhook verification failed: ${data.verification_status}`,
-      );
+      console.warn(`[paypal] Webhook verification failed: ${data.verification_status}`);
       return isSandbox();
     }
 

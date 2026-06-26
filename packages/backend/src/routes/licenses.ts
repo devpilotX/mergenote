@@ -59,11 +59,10 @@ licensesRouter.post(
   "/",
   validateBody([
     { name: "email", type: "string", required: true },
-    { name: "tier", type: "string", oneOf: ["free", "premium"] }
+    { name: "tier", type: "string", oneOf: ["free", "premium"] },
   ]),
   async (req: Request, res: Response) => {
-    const { email, tier } =
-      req.body as CreateLicenseBody;
+    const { email, tier } = req.body as CreateLicenseBody;
 
     const licenseKey = generateLicenseKey();
     const chosenPlan = tier ?? "free";
@@ -84,50 +83,36 @@ licensesRouter.post(
  *
  * Registered before `/:id` so Express doesn't interpret "by-key" as a UUID.
  */
-licensesRouter.get(
-  "/by-key/:key",
-  validateParam("key"),
-  async (req: Request, res: Response) => {
-    const { key } = req.params;
+licensesRouter.get("/by-key/:key", validateParam("key"), async (req: Request, res: Response) => {
+  const { key } = req.params;
 
-    const result = await query<LicenseRow>(
-      `SELECT * FROM licenses WHERE license_key = $1 LIMIT 1`,
-      [key],
-    );
+  const result = await query<LicenseRow>(`SELECT * FROM licenses WHERE license_key = $1 LIMIT 1`, [
+    key,
+  ]);
 
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: "License not found" });
-      return;
-    }
+  if (result.rows.length === 0) {
+    res.status(404).json({ error: "License not found" });
+    return;
+  }
 
-    res.json(result.rows[0]);
-  },
-);
-
-
+  res.json(result.rows[0]);
+});
 
 /**
  * GET /api/licenses/:id — Get a single license by UUID.
  */
-licensesRouter.get(
-  "/:id",
-  validateParam("id"),
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
+licensesRouter.get("/:id", validateParam("id"), async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const result = await query<LicenseRow>(
-      `SELECT * FROM licenses WHERE id = $1 LIMIT 1`,
-      [id],
-    );
+  const result = await query<LicenseRow>(`SELECT * FROM licenses WHERE id = $1 LIMIT 1`, [id]);
 
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: "License not found" });
-      return;
-    }
+  if (result.rows.length === 0) {
+    res.status(404).json({ error: "License not found" });
+    return;
+  }
 
-    res.json(result.rows[0]);
-  },
-);
+  res.json(result.rows[0]);
+});
 
 /**
  * PUT /api/licenses/:id — Update mutable fields on an existing license.
@@ -194,23 +179,19 @@ licensesRouter.put(
 /**
  * DELETE /api/licenses/:id — Soft-delete by setting status to 'cancelled'.
  */
-licensesRouter.delete(
-  "/:id",
-  validateParam("id"),
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
+licensesRouter.delete("/:id", validateParam("id"), async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const result = await query<LicenseRow>(
-      `UPDATE licenses SET status = 'revoked', revoked_at = NOW(), updated_at = NOW()
+  const result = await query<LicenseRow>(
+    `UPDATE licenses SET status = 'revoked', revoked_at = NOW(), updated_at = NOW()
        WHERE id = $1 RETURNING *`,
-      [id],
-    );
+    [id],
+  );
 
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: "License not found" });
-      return;
-    }
+  if (result.rows.length === 0) {
+    res.status(404).json({ error: "License not found" });
+    return;
+  }
 
-    res.json(result.rows[0]);
-  },
-);
+  res.json(result.rows[0]);
+});
